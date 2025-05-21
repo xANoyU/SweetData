@@ -1,0 +1,11 @@
+name: SweetData
+version: '${version}'
+main: top.mrxiaom.sweetdata.SweetData
+api-version: 1.13
+depend: [  ]
+softdepend: [ PlaceholderAPI ]
+authors: [ MrXiaoM ]
+commands:
+  sweetdata:
+    description: 'The main command of SweetData'
+    aliases: [ sdata, data, sd ]
