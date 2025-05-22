@@ -1,0 +1,7 @@
+
+# 数据库玩家匹配模式
+# 【一旦确定该选项，就不要再更改】
+# true  - 使用UUID匹配玩家，适合正版、外置登录服务器
+# false - 使用玩家名匹配玩家，适合离线模式服务器
+# auto  - 根据 server.properties 里的选项确定 true 或 false
+online-mode: auto
