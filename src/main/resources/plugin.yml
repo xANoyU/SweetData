@@ -8,4 +8,4 @@ authors: [ MrXiaoM ]
 commands:
   sweetdata:
     description: 'The main command of SweetData'
-    aliases: [ sdata, data, sd ]
+    aliases: [ sdata, data ]
