@@ -132,25 +132,40 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             plugin.reloadConfig();
             return t(sender, "&a配置文件已重载");
         }
-        return t(sender, "&e&lSweetData 帮助命令&r",
-                "&f/data get <玩家> <键> &7获取玩家的数值",
-                "&f/data set <玩家> <键> <值> &7设置玩家的数值",
-                "&f/data plus <玩家> <键> <值> &7如果数值是整数，为玩家的数值+1，如果数值不是整数或不存在，不进行任何操作",
-                "&f/data remove <玩家> <键> &7移除玩家的数值",
-                "&f/data reload database &7重新连接数据库，并刷新所有缓存",
-                "&f/data reload &7重载配置文件");
+        return t(sender, "&e&lSweetData 玩家数据命令&r",
+                "  &f/data get <玩家> <键> &7获取玩家的数值",
+                "  &f/data set <玩家> <键> <值> &7设置玩家的数值",
+                "  &f/data plus <玩家> <键> <值> &7如果数值是整数，增加玩家的数值(可以为负数)，如果数值不是整数或不存在，不进行任何操作",
+                "  &f/data remove <玩家> <键> &7移除玩家的数值",
+                "  &f/data del <玩家> <键> &7移除玩家的数值",
+                "&e&lSweetData 管理命令&r",
+                "  &f/data reload database &7重新连接数据库，并刷新所有缓存",
+                "  &f/data reload &7重载配置文件");
     }
 
     private static final List<String> emptyList = Lists.newArrayList();
-    private static final List<String> listArg0 = Lists.newArrayList(
-            "hello");
+    private static final List<String> listArg0 = Lists.newArrayList();
     private static final List<String> listOpArg0 = Lists.newArrayList(
-            "hello", "reload");
+            "get", "set", "plus", "remove", "del", "reload");
+    private static final List<String> listArg1Player = Lists.newArrayList(
+            "get", "set", "plus", "remove", "del");
+    private static final List<String> listArg1Reload = Lists.newArrayList(
+            "database");
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 1) {
             return startsWith(sender.isOp() ? listOpArg0 : listArg0, args[0]);
+        }
+        if (args.length == 2) {
+            if (sender.isOp()) {
+                if (listArg1Player.contains(args[0].toLowerCase())) {
+                    return null;
+                }
+                if ("reload".equalsIgnoreCase(args[0])) {
+                    return startsWith(listArg1Reload, args[1]);
+                }
+            }
         }
         return emptyList;
     }
