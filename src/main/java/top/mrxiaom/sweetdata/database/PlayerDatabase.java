@@ -1,5 +1,6 @@
 package top.mrxiaom.sweetdata.database;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,8 +8,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.database.IDatabase;
 import top.mrxiaom.pluginbase.utils.Pair;
+import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweetdata.SweetData;
 import top.mrxiaom.sweetdata.database.entry.PlayerCache;
 import top.mrxiaom.sweetdata.func.AbstractPluginHolder;
@@ -80,6 +83,16 @@ public class PlayerDatabase extends AbstractPluginHolder implements IDatabase, L
         }
     }
 
+    @Nullable
+    public PlayerCache getCacheOrNull(@Nullable OfflinePlayer p) {
+        Player player = (p != null && p.isOnline()) ? p.getPlayer() : null;
+        if (player != null) {
+            return getCache(player);
+        } else {
+            return null;
+        }
+    }
+
     @NotNull
     public PlayerCache getCache(Player player) {
         PlayerCache cache = cacheMap.get(player);
@@ -103,6 +116,55 @@ public class PlayerDatabase extends AbstractPluginHolder implements IDatabase, L
         return cache;
     }
 
+    @Nullable
+    public Integer intAdd(OfflinePlayer player, String key, int toAdd) {
+        try (Connection conn = plugin.getConnection()) {
+            String p = plugin.databaseKey(player);
+            Integer value = get(conn, p, key).flatMap(Util::parseInt).orElse(null);
+            if (value != null) {
+                int finalValue = value + toAdd;
+                set(conn, p, key, String.valueOf(finalValue));
+                return finalValue;
+            }
+        } catch (SQLException e) {
+            warn(e);
+        }
+        return null;
+    }
+
+    public Optional<String> get(OfflinePlayer player, String key) {
+        try (Connection conn = plugin.getConnection()) {
+            String p = plugin.databaseKey(player);
+            return get(conn, p, key);
+        } catch (SQLException e) {
+            warn(e);
+        }
+        return Optional.empty();
+    }
+
+    public void set(OfflinePlayer player, String key, String value) {
+        try (Connection conn = plugin.getConnection()) {
+            String p = plugin.databaseKey(player);
+            set(conn, p, key, value);
+        } catch (SQLException e) {
+            warn(e);
+        }
+    }
+
+    public void remove(OfflinePlayer player, String key) {
+        try (Connection conn = plugin.getConnection()) {
+            PlayerCache cache = getCacheOrNull(player);
+            if (cache != null) {
+                cache.remove(key);
+            }
+            String p = plugin.databaseKey(player);
+            remove(conn, p, key);
+        } catch (SQLException e) {
+            warn(e);
+        }
+    }
+
+    @NotNull
     private Optional<String> get(Connection conn, String player, String key) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(
                 "SELECT `value` FROM `" + TABLE_PLAYERS + "` WHERE `player=`? AND `key`=?;"

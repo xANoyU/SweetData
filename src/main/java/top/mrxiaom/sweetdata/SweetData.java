@@ -61,7 +61,7 @@ public class SweetData extends BukkitPlugin {
     }
 
     @NotNull
-    public String databaseKey(OfflinePlayer player) {
+    public String databaseKey(@NotNull OfflinePlayer player) {
         if (onlineMode) {
             return player.getUniqueId().toString();
         } else {
