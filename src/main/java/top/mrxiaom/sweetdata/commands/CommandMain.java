@@ -133,11 +133,11 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             return t(sender, "&a配置文件已重载");
         }
         return t(sender, "&e&lSweetData 玩家数据命令&r",
-                "  &f/data get <玩家> <键> &7获取玩家的数值",
-                "  &f/data set <玩家> <键> <值> &7设置玩家的数值",
-                "  &f/data plus <玩家> <键> <值> &7如果数值是整数，增加玩家的数值(可以为负数)，如果数值不是整数或不存在，不进行任何操作",
-                "  &f/data remove <玩家> <键> &7移除玩家的数值",
-                "  &f/data del <玩家> <键> &7移除玩家的数值",
+                "  &f/data get <玩家名> <键> &7获取玩家的数值",
+                "  &f/data set <玩家名> <键> <值> &7设置玩家的数值",
+                "  &f/data plus <玩家名> <键> <值> &7如果数值是整数，增加玩家的数值(可以为负数)，如果数值不是整数或不存在，不进行任何操作",
+                "  &f/data remove <玩家名> <键> &7移除玩家的数值",
+                "  &f/data del <玩家名> <键> &7移除玩家的数值",
                 "&e&lSweetData 管理命令&r",
                 "  &f/data reload database &7重新连接数据库，并刷新所有缓存",
                 "  &f/data reload &7重载配置文件");
