@@ -1,6 +1,7 @@
 package top.mrxiaom.sweetdata;
         
 import top.mrxiaom.pluginbase.BukkitPlugin;
+import top.mrxiaom.pluginbase.utils.scheduler.FoliaLibScheduler;
 
 public class SweetData extends BukkitPlugin {
     public static SweetData getInstance() {
@@ -15,7 +16,7 @@ public class SweetData extends BukkitPlugin {
                 .reconnectDatabaseWhenReloadConfig(false)
                 .scanIgnore("top.mrxiaom.sweetdata.libs")
         );
-        // this.scheduler = new FoliaLibScheduler(this);
+        this.scheduler = new FoliaLibScheduler(this);
     }
 
     @Override
