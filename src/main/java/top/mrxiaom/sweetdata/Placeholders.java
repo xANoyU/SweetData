@@ -61,7 +61,7 @@ public class Placeholders extends PlaceholderExpansion {
 
                 if ("range".equals(conditionArray[0]) && conditionArray.length == 3) {
                     Integer rangeMin = Util.parseInt(conditionArray[1]).orElse(null);
-                    Integer rangeMax = Util.parseInt(conditionArray[1]).orElse(null);
+                    Integer rangeMax = Util.parseInt(conditionArray[2]).orElse(null);
                     if (rangeMin == null || rangeMax == null) return bool(false);
                     String str = get(player, key).orElse(def);
                     Integer value = Util.parseInt(str).orElse(null);
