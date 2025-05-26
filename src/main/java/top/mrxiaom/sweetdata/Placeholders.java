@@ -59,7 +59,7 @@ public class Placeholders extends PlaceholderExpansion {
                 String key = split1[0];
                 String def = split1.length == 2 ? split1[1] : "";
 
-                if ("range".equals(conditionArray[0]) && split.length == 3) {
+                if ("range".equals(conditionArray[0]) && conditionArray.length == 3) {
                     Integer rangeMin = Util.parseInt(conditionArray[1]).orElse(null);
                     Integer rangeMax = Util.parseInt(conditionArray[1]).orElse(null);
                     if (rangeMin == null || rangeMax == null) return bool(false);
