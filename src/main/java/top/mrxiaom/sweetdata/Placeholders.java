@@ -53,11 +53,12 @@ public class Placeholders extends PlaceholderExpansion {
             if (params.startsWith("$")) {
                 String[] split = params.substring(1).split("\\$", 2);
                 if (split.length == 1) return bool(false);
-                String[] conditionArray = split[0].split(":");
+                String[] conditionArray = split[0].split(",");
 
-                String[] split1 = params.split(";", 2);
+                String[] split1 = split[1].split(";", 2);
                 String key = split1[0];
                 String def = split1.length == 2 ? split1[1] : "";
+
                 if ("range".equals(conditionArray[0]) && split.length == 3) {
                     Integer rangeMin = Util.parseInt(conditionArray[1]).orElse(null);
                     Integer rangeMax = Util.parseInt(conditionArray[1]).orElse(null);
