@@ -114,7 +114,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 result = db.intAdd(player, key, toAdd);
             }
             if (result != null) {
-                return t(sender, "&a已设置玩家&e " + args[1] + " &a的数值增加&e " + toAdd + "，最终&e " + key + "=" + result + "&a.");
+                return t(sender, "&a已设置玩家&e " + args[1] + " &a的数值增加&e " + toAdd + "&a，最终&e " + key + "&f=&e" + result + "&a.");
             }
             // return t(sender, "&e为玩家&b " + args[1] + " &e的数值&b " + key + " &a增加&e " + toAdd + " &a失败");
             return true;
