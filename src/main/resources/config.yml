@@ -5,3 +5,6 @@
 # false - 使用玩家名匹配玩家，适合离线模式服务器
 # auto  - 根据 server.properties 里的选项确定 true 或 false
 online-mode: auto
+
+# 在控制台成功增加数值时不提示
+console-silent-plus: true

@@ -3,10 +3,8 @@ package top.mrxiaom.sweetdata.commands;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
+import org.bukkit.command.*;
+import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +23,13 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
     public CommandMain(SweetData plugin) {
         super(plugin);
         registerCommand("sweetdata", this);
+    }
+
+    boolean consoleSilentPlus;
+
+    @Override
+    public void reloadConfig(MemoryConfiguration config) {
+        consoleSilentPlus = config.getBoolean("console-silent-plus", true);
     }
 
     @Override
@@ -112,6 +117,9 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 }
             } else {
                 result = db.intAdd(player, key, toAdd);
+            }
+            if (consoleSilentPlus && sender instanceof ConsoleCommandSender) {
+                return true;
             }
             if (result != null) {
                 return t(sender, "&a已设置玩家&e " + args[1] + " &a的数值增加&e " + toAdd + "&a，最终&e " + key + "&f=&e" + result + "&a.");
