@@ -26,6 +26,8 @@ Minecraft 通用数值同步插件
 | `/data reload database` | 重新连接数据库，并刷新所有缓存 | `sweet.data.reload` |
 | `/data reload` | 重载配置文件 | `sweet.data.reload` |
 
+请尽量不要以 `global_` 开头作为玩家数据键名。
+
 ## 已知问题
 
 如果在`子服A`设置离线玩家的数值，而该玩家在`子服B`在线，那么将会出现数据不同步的情况。
@@ -36,3 +38,5 @@ Minecraft 通用数值同步插件
 
 + `%sweetdata_<键>[;<默认值>]%` 获取玩家数值
 + `%sweetdata_$range,<最小值>,<最大值>$<键>[;<默认值>]%` 判定玩家数值是否是整数，且是否在范围内
++ `%sweetdata_global_<键>[;<默认值>]%` 获取全局数值
++ `%sweetdata_global_$range,<最小值>,<最大值>$<键>[;<默认值>]%` 判定全局数值是否是整数，且是否在范围内
