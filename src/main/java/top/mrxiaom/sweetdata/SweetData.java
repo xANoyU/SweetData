@@ -17,7 +17,7 @@ public class SweetData extends BukkitPlugin {
 
     public SweetData() {
         super(options()
-                .bungee(false)
+                .bungee(true)
                 .adventure(true)
                 .database(true)
                 .reconnectDatabaseWhenReloadConfig(false)
