@@ -32,16 +32,23 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         consoleSilentPlus = config.getBoolean("console-silent-plus", true);
     }
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (sender.isOp()) {
-            if (operatorCommand(sender, args)) return true;
+    @SuppressWarnings("SameParameterValue")
+    private boolean check(String[] command, String permission, String arg, CommandSender sender) {
+        for (String s : command) {
+            if (arg.equalsIgnoreCase(s)) {
+                return sender.hasPermission(permission);
+            }
         }
-        return true;
+        return false;
+    }
+    private boolean check(String command, String permission, String arg, CommandSender sender) {
+        return arg.equalsIgnoreCase(command) && sender.hasPermission(permission);
     }
 
-    private boolean operatorCommand(CommandSender sender, String[] args) {
-        if (args.length >= 3 && "get".equalsIgnoreCase(args[0])) {
+    private final String[] commandRemoveDel = {"remove", "del"};
+    @Override
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        if (args.length >= 3 && check("get", "sweet.data.player.get", args[0], sender)) {
             OfflinePlayer player = Util.getOfflinePlayer(args[1]).orElse(null);
             if (player == null) {
                 return t(sender, "&e指定的玩家不存在 &7(" + args[1] + ")");
@@ -62,7 +69,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 return t(sender, "&a玩家&e " + args[1] + " &a没有设置数值&e " + key + "&a.");
             }
         }
-        if (args.length >= 4 && "set".equalsIgnoreCase(args[0])) {
+        if (args.length >= 4 && check("set", "sweet.data.player.set", args[0], sender)) {
             OfflinePlayer player = Util.getOfflinePlayer(args[1]).orElse(null);
             if (player == null) {
                 return t(sender, "&e指定的玩家不存在 &7(" + args[1] + ")");
@@ -80,7 +87,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             }
             return t(sender, "&a已设置玩家&e " + args[1] + " &a的数值&e " + key + "=" + value + "&a.");
         }
-        if (args.length >= 3 && ("remove".equalsIgnoreCase(args[0]) || "del".equalsIgnoreCase(args[0]))) {
+        if (args.length >= 3 && check(commandRemoveDel, "sweet.data.player.del", args[0], sender)) {
             OfflinePlayer player = Util.getOfflinePlayer(args[1]).orElse(null);
             if (player == null) {
                 return t(sender, "&e指定的玩家不存在 &7(" + args[1] + ")");
@@ -95,7 +102,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             db.remove(player, key);
             return t(sender, "&a已移除玩家&e " + args[1] + " &a的数值 &e" + key + "&a.");
         }
-        if (args.length >= 4 && "plus".equalsIgnoreCase(args[0])) {
+        if (args.length >= 4 && check("plus", "sweet.data.player.plus", args[0], sender)) {
             OfflinePlayer player = Util.getOfflinePlayer(args[1]).orElse(null);
             if (player == null) {
                 return t(sender, "&e指定的玩家不存在 &7(" + args[1] + ")");
@@ -127,7 +134,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             // return t(sender, "&e为玩家&b " + args[1] + " &e的数值&b " + key + " &a增加&e " + toAdd + " &a失败");
             return true;
         }
-        if (args.length > 0 && "reload".equalsIgnoreCase(args[0])) {
+        if (args.length > 0 && check("reload", "sweet.data.reload", args[0], sender)) {
             if (args.length > 1 && "database".equalsIgnoreCase(args[1])) {
                 plugin.options.database().reloadConfig();
                 plugin.options.database().reconnect();
@@ -140,21 +147,26 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             plugin.reloadConfig();
             return t(sender, "&a配置文件已重载");
         }
-        return t(sender, "&e&lSweetData 玩家数据命令&r",
-                "  &f/data get <玩家名> <键> &7获取玩家的数值",
-                "  &f/data set <玩家名> <键> <值> &7设置玩家的数值",
-                "  &f/data plus <玩家名> <键> <值> &7如果数值是整数，增加玩家的数值(可以为负数)，如果数值不是整数或不存在，不进行任何操作",
-                "  &f/data remove <玩家名> <键> &7移除玩家的数值",
-                "  &f/data del <玩家名> <键> &7移除玩家的数值",
-                "&e&lSweetData 管理命令&r",
-                "  &f/data reload database &7重新连接数据库，并刷新所有缓存",
-                "  &f/data reload &7重载配置文件");
+        if (sender.hasPermission("sweet.data.help")) {
+            return t(sender, "&e&lSweetData 玩家数据命令&r",
+                    "  &f/data get <玩家名> <键> &7获取玩家的数值",
+                    "  &f/data set <玩家名> <键> <值> &7设置玩家的数值",
+                    "  &f/data plus <玩家名> <键> <值> &7如果数值是整数，增加玩家的数值(可以为负数)，如果数值不是整数或不存在，不进行任何操作",
+                    "  &f/data remove <玩家名> <键> &7移除玩家的数值",
+                    "  &f/data del <玩家名> <键> &7移除玩家的数值",
+                    "&e&lSweetData 管理命令&r",
+                    "  &f/data reload database &7重新连接数据库，并刷新所有缓存",
+                    "  &f/data reload &7重载配置文件");
+        }
+        return true;
     }
 
-    private static final List<String> emptyList = Lists.newArrayList();
-    private static final List<String> listArg0 = Lists.newArrayList();
-    private static final List<String> listOpArg0 = Lists.newArrayList(
-            "get", "set", "plus", "remove", "del", "reload");
+    private void tab(CommandSender sender, List<String> list, String permission, String... args) {
+        if (sender.hasPermission(permission)) {
+            list.addAll(Arrays.asList(args));
+        }
+    }
+    private static final List<String> emptyList = Collections.emptyList();
     private static final List<String> listArg1Player = Lists.newArrayList(
             "get", "set", "plus", "remove", "del");
     private static final List<String> listArg1Reload = Lists.newArrayList(
@@ -163,16 +175,23 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 1) {
-            return startsWith(sender.isOp() ? listOpArg0 : listArg0, args[0]);
+            List<String> list = new ArrayList<>();
+            tab(sender, list, "sweet.data.player.get", "get");
+            tab(sender, list, "sweet.data.player.set", "set");
+            tab(sender, list, "sweet.data.player.del", "remove", "del");
+            tab(sender, list, "sweet.data.player.plus", "plus");
+            tab(sender, list, "sweet.data.reload", "reload");
+            return list;
         }
         if (args.length == 2) {
-            if (sender.isOp()) {
-                if (listArg1Player.contains(args[0].toLowerCase())) {
+            if (listArg1Player.contains(args[0].toLowerCase())) {
+                String permKey = (args[0].equalsIgnoreCase("remove") ? "del" : args[0]).toLowerCase();
+                if (sender.hasPermission(permKey)) {
                     return null;
                 }
-                if ("reload".equalsIgnoreCase(args[0])) {
-                    return startsWith(listArg1Reload, args[1]);
-                }
+            }
+            if (check("reload", "sweet.data.reload", args[0], sender)) {
+                return startsWith(listArg1Reload, args[1]);
             }
         }
         return emptyList;
