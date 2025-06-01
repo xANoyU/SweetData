@@ -47,3 +47,11 @@ Minecraft 通用数值同步插件
 + `%sweetdata_$range,<最小值>,<最大值>$<键>[;<默认值>]%` 判定玩家数值是否是整数，且是否在范围内
 + `%sweetdata_global_<键>[;<默认值>]%` 获取全局数值
 + `%sweetdata_global_$range,<最小值>,<最大值>$<键>[;<默认值>]%` 判定全局数值是否是整数，且是否在范围内
+
+示例
+```
+%sweetdata_my-key%               如果 my-key 为 1，则输出 1，未设置则输出空字符串
+%sweetdata_my-key;0%             如果 my-key 未设置，则输出 0
+%sweetdata_$range,0,9$my-key;0%  如果 my-key 未设置，或者不是整数，或者不在 0-9 范围内，则输出 no；反之输出 yes
+输出的 yes 和 no 可以在 PlaceholderAPI 的 config.yml 中修改
+```
