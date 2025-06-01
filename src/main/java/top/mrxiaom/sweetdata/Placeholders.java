@@ -1,43 +1,19 @@
 package top.mrxiaom.sweetdata;
 
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
-import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import top.mrxiaom.pluginbase.utils.PlaceholdersExpansion;
 import top.mrxiaom.pluginbase.utils.Util;
 import top.mrxiaom.sweetdata.database.PlayerDatabase;
 import top.mrxiaom.sweetdata.database.entry.PlayerCache;
 
 import java.util.Optional;
 
-public class Placeholders extends PlaceholderExpansion {
-    private final SweetData plugin;
+public class Placeholders extends PlaceholdersExpansion<SweetData> {
     public Placeholders(SweetData plugin) {
-        this.plugin = plugin;
-    }
-
-    @Override
-    public boolean register() {
-        try {
-            unregister();
-        } catch (Throwable ignored) {}
-        return super.register();
-    }
-
-    @Override
-    public @NotNull String getIdentifier() {
-        return plugin.getDescription().getName().toLowerCase();
-    }
-
-    @Override
-    public @NotNull String getAuthor() {
-        return String.join(", ", plugin.getDescription().getAuthors());
-    }
-
-    @Override
-    public @NotNull String getVersion() {
-        return plugin.getDescription().getVersion();
+        super(plugin);
     }
 
     @Override
