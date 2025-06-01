@@ -3,7 +3,10 @@ package top.mrxiaom.sweetdata.database.entry;
 import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.TreeMap;
 
 public class GlobalCache {
     private final Map<String, String> data = new TreeMap<>();

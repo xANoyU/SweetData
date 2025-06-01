@@ -26,8 +26,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
     public CommandMain(SweetData plugin) {
         super(plugin);
         registerCommand("sweetdata", this);
-        bungeecord = Bukkit.spigot().getConfig().getBoolean("settings.bungeecord", true);
-        info("bungeecord: " + bungeecord);
+        bungeecord = Bukkit.spigot().getConfig().getBoolean("settings.bungeecord", false);
     }
 
     boolean consoleSilentPlus;
