@@ -11,7 +11,9 @@ import org.bukkit.event.Listener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import top.mrxiaom.pluginbase.func.AutoRegister;
+import top.mrxiaom.pluginbase.utils.Pair;
 import top.mrxiaom.pluginbase.utils.Util;
+import top.mrxiaom.sweetdata.Messages;
 import top.mrxiaom.sweetdata.SweetData;
 import top.mrxiaom.sweetdata.database.PlayerDatabase;
 import top.mrxiaom.sweetdata.database.entry.GlobalCache;
@@ -62,7 +64,8 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
         if (args.length >= 3 && check("get", "sweet.data.player.get", args[0], sender)) {
             OfflinePlayer player = Util.getOfflinePlayer(args[1]).orElse(null);
             if (player == null) {
-                return t(sender, "&e指定的玩家不存在 &7(" + args[1] + ")");
+                return Messages.command__player_not_found.tm(sender,
+                        Pair.of("%player%", args[1]));
             }
             String key = args[2];
             String value;
@@ -75,15 +78,21 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 value = db.get(player, key).orElse(null);
             }
             if (value != null) {
-                return t(sender, "&a玩家&e " + args[1] + " &a的数值 &e" + key + "=" + value + "&a.");
+                return Messages.command__get__success.tm(sender,
+                        Pair.of("%player%", args[1]),
+                        Pair.of("%key%", key),
+                        Pair.of("%value%", value));
             } else {
-                return t(sender, "&a玩家&e " + args[1] + " &a没有设置数值&e " + key + "&a.");
+                return Messages.command__get__not_found.tm(sender,
+                        Pair.of("%player%", args[1]),
+                        Pair.of("%key%", key));
             }
         }
         if (args.length >= 4 && check("set", "sweet.data.player.set", args[0], sender)) {
             OfflinePlayer player = Util.getOfflinePlayer(args[1]).orElse(null);
             if (player == null) {
-                return t(sender, "&e指定的玩家不存在 &7(" + args[1] + ")");
+                Messages.command__player_not_found.tm(sender,
+                        Pair.of("%player%", args[1]));
             }
             String key = args[2];
             String value = consume(args, 3);
@@ -96,12 +105,16 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             } else {
                 db.set(player, key, value);
             }
-            return t(sender, "&a已设置玩家&e " + args[1] + " &a的数值&e " + key + "=" + value + "&a.");
+            return Messages.command__set__success.tm(sender,
+                    Pair.of("%player%", args[1]),
+                    Pair.of("%key%", key),
+                    Pair.of("%value%", value));
         }
         if (args.length >= 3 && check(commandRemoveDel, "sweet.data.player.del", args[0], sender)) {
             OfflinePlayer player = Util.getOfflinePlayer(args[1]).orElse(null);
             if (player == null) {
-                return t(sender, "&e指定的玩家不存在 &7(" + args[1] + ")");
+                return Messages.command__player_not_found.tm(sender,
+                        Pair.of("%player%", args[1]));
             }
             String key = args[2];
 
@@ -111,17 +124,21 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 cache.remove(key);
             }
             db.remove(player, key);
-            return t(sender, "&a已移除玩家&e " + args[1] + " &a的数值 &e" + key + "&a.");
+            return Messages.command__remove__success.tm(sender,
+                    Pair.of("%player%", args[1]),
+                    Pair.of("%key%", key));
         }
         if (args.length >= 4 && check("plus", "sweet.data.player.plus", args[0], sender)) {
             OfflinePlayer player = Util.getOfflinePlayer(args[1]).orElse(null);
             if (player == null) {
-                return t(sender, "&e指定的玩家不存在 &7(" + args[1] + ")");
+                return Messages.command__player_not_found.tm(sender,
+                        Pair.of("%player%", args[1]));
             }
             String key = args[2];
             Integer toAdd = Util.parseInt(args[3]).orElse(null);
             if (toAdd == null) {
-                return t(sender, "&e无效的数值 " + args[3]);
+                return Messages.command__plus__not_integer.tm(sender,
+                        Pair.of("%input%", args[3]));
             }
             PlayerDatabase db = plugin.getPlayerDatabase();
             PlayerCache cache = db.getCacheOrNull(player);
@@ -140,10 +157,15 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 return true;
             }
             if (result != null) {
-                return t(sender, "&a已为玩家&e " + args[1] + " &a的数值增加&e " + toAdd + "&a，最终&e " + key + "&f=&e" + result + "&a.");
+                return Messages.command__plus__success.tm(sender,
+                        Pair.of("%player%", args[1]),
+                        Pair.of("%key%", key),
+                        Pair.of("%value%", result));
             }
-            // return t(sender, "&e为玩家&b " + args[1] + " &e的数值&b " + key + " &a增加&e " + toAdd + " &a失败");
-            return true;
+            return Messages.command__plus__fail.tm(sender,
+                    Pair.of("%player%", args[1]),
+                    Pair.of("%key%", key),
+                    Pair.of("%added%", toAdd));
         }
         if (args.length > 0 && check("reload", "sweet.data.reload", args[0], sender)) {
             if (args.length > 1 && "database".equalsIgnoreCase(args[1])) {
@@ -153,25 +175,13 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     db.refreshCache(player);
                 }
-                return t(sender, "&a已重新连接数据库");
+                return Messages.command__reload__database.tm(sender);
             }
             plugin.reloadConfig();
-            return t(sender, "&a配置文件已重载");
+            return Messages.command__reload__normal.tm(sender);
         }
         if (sender.hasPermission("sweet.data.help")) {
-            return t(sender, "&e&lSweetData 全局数据命令&r",
-                    "  &f/data <global/g> get <键> &7获取玩家的数值",
-                    "  &f/data <global/g> set <键> <值> &7设置玩家的数值",
-                    "  &f/data <global/g> plus <键> <值> &7如果数值是整数，增加玩家的数值(可以为负数)，如果数值不是整数或不存在，不进行任何操作",
-                    "  &f/data <global/g> <remove/del> <键> &7移除玩家的数值",
-                    "&e&lSweetData 玩家数据命令&r",
-                    "  &f/data get <玩家名> <键> &7获取玩家的数值",
-                    "  &f/data set <玩家名> <键> <值> &7设置玩家的数值",
-                    "  &f/data plus <玩家名> <键> <值> &7如果数值是整数，增加玩家的数值(可以为负数)，如果数值不是整数或不存在，不进行任何操作",
-                    "  &f/data <remove/del> <玩家名> <键> &7移除玩家的数值",
-                    "&e&lSweetData 管理命令&r",
-                    "  &f/data reload database &7重新连接数据库，并刷新所有缓存",
-                    "  &f/data reload &7重载配置文件");
+            return Messages.command__help.tm(sender);
         }
         return true;
     }
@@ -185,9 +195,12 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             value = global.get(key).orElse(null);
 
             if (value != null) {
-                return t(sender, "&a全局数值 &e" + key + "=" + value + "&a.");
+                return Messages.command__global__get__success.tm(sender,
+                        Pair.of("%key%", key),
+                        Pair.of("%value%", value));
             } else {
-                return t(sender, "&a没有设置全局数值&e " + key + "&a.");
+                return Messages.command__global__get__not_found.tm(sender,
+                        Pair.of("%key%", key));
             }
         }
         if (check("set", "sweet.data.global.set", args[1], sender)) {
@@ -197,7 +210,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             if (bungeecord) {
                 whoever = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
                 if (whoever == null && !unsafeMode) {
-                    return t(sender, "&e已在 spigot.yml 开启 bungeecord 模式但未开启 unsafe-mode，不允许在无人情况下对全局数值进行操作");
+                    return Messages.command__global__unsafe.tm(sender);
                 }
             } else {
                 whoever = null;
@@ -207,7 +220,9 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             db.globalSet(key, value);
             db.sendRequireGlobalCacheUpdate(whoever, key, value);
 
-            return t(sender, "&a已设置全局数值&e " + key + "=" + value + "&a.");
+            return Messages.command__global__set__success.tm(sender,
+                    Pair.of("%key%", key),
+                    Pair.of("%value%", value));
         }
         if (check(commandRemoveDel, "sweet.data.global.del", args[1], sender)) {
             String key = args[2];
@@ -215,7 +230,7 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             if (bungeecord) {
                 whoever = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
                 if (whoever == null && !unsafeMode) {
-                    return t(sender, "&e已在 spigot.yml 开启 bungeecord 模式但未开启 unsafe-mode，不允许在无人情况下对全局数值进行操作");
+                    return Messages.command__global__unsafe.tm(sender);
                 }
             } else {
                 whoever = null;
@@ -225,19 +240,21 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
             db.globalRemove(key);
             db.sendRequireGlobalCacheUpdate(whoever, key, null);
 
-            return t(sender, "&a已移除全局数值 &e" + key + "&a.");
+            return Messages.command__global__remove__success.tm(sender,
+                    Pair.of("%key%", key));
         }
         if (check("plus", "sweet.data.global.plus", args[1], sender)) {
             String key = args[2];
             Integer toAdd = Util.parseInt(args[3]).orElse(null);
             if (toAdd == null) {
-                return t(sender, "&e无效的数值 " + args[3]);
+                return Messages.command__global__plus__not_integer.tm(sender,
+                        Pair.of("%input%", args[3]));
             }
             Player whoever;
             if (bungeecord) {
                 whoever = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
                 if (whoever == null && !unsafeMode) {
-                    return t(sender, "&e已在 spigot.yml 开启 bungeecord 模式但未开启 unsafe-mode，不允许在无人情况下对全局数值进行操作");
+                    return Messages.command__global__unsafe.tm(sender);
                 }
             } else {
                 whoever = null;
@@ -252,10 +269,14 @@ public class CommandMain extends AbstractModule implements CommandExecutor, TabC
                 return true;
             }
             if (result != null) {
-                return t(sender, "&a已为全局数值增加&e " + toAdd + "&a，最终&e " + key + "&f=&e" + result + "&a.");
+                return Messages.command__global__plus__success.tm(sender,
+                        Pair.of("%added%", toAdd),
+                        Pair.of("%key%", key),
+                        Pair.of("%value%", result));
             }
-            // return t(sender, "&e为全局数值&b " + key + " &a增加&e " + toAdd + " &a失败");
-            return true;
+            return Messages.command__global__plus__fail.tm(sender,
+                    Pair.of("%key%", key),
+                    Pair.of("%added%", toAdd));
         }
         return false;
     }
