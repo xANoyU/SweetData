@@ -39,26 +39,43 @@ public class Placeholders extends PlaceholdersExpansion<SweetData> {
 
             return global.get(key).orElse(def);
         }
+        if (params.startsWith("@")) {
+            String[] split = params.substring(1).split("@_", 2);
+            if (split.length == 2) {
+                OfflinePlayer p = Util.getOfflinePlayer(split[0]).orElse(null);
+                return playerRequest(p, split[1]);
+            }
+        }
         String request = super.onRequest(player, params);
         if (request != null) {
             return request;
         }
         if (player != null) { // 玩家数值
-            if (params.startsWith("$")) {
-                String[] split = params.substring(1).split("\\$", 2);
-                if (split.length == 1) return bool(false);
-                String[] conditionArray = split[0].split(",");
-                String[] split1 = split[1].split(";", 2);
-                return $(conditionArray, split1, key -> get(player, key));
-            }
-
-            String[] split = params.split(";", 2);
-            String key = split[0];
-            String def = split.length == 2 ? split[1] : "";
-
-            return get(player, key).orElse(def);
+            return playerRequest(player, params);
         }
         return null;
+    }
+
+    private String playerRequest(@Nullable OfflinePlayer player, String params) {
+        if (params.startsWith("$")) {
+            String[] split = params.substring(1).split("\\$", 2);
+            if (split.length == 1) return bool(false);
+            String[] conditionArray = split[0].split(",");
+            String[] split1 = split[1].split(";", 2);
+            if (player == null) {
+                return split1[1]; // def
+            }
+            return $(conditionArray, split1, key -> get(player, key));
+        }
+
+        String[] split = params.split(";", 2);
+        String key = split[0];
+        String def = split.length == 2 ? split[1] : "";
+        if (player == null) {
+            return def;
+        }
+
+        return get(player, key).orElse(def);
     }
 
     private String $(String[] conditionArray, String[] split, Function<String, Optional<String>> get) {

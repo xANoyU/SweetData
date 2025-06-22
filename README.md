@@ -45,6 +45,8 @@ Minecraft 通用数值同步插件
 
 + `%sweetdata_<键>[;<默认值>]%` 获取玩家数值
 + `%sweetdata_$range,<最小值>,<最大值>$<键>[;<默认值>]%` 判定玩家数值是否是整数，且是否在范围内
++ `%sweetdata_@<玩家名>@_<键>[;<默认值>]%` 获取指定玩家数值
++ `%sweetdata_@<玩家名>@_$range,<最小值>,<最大值>$<键>[;<默认值>]%` 判定指定玩家数值是否是整数，且是否在范围内
 + `%sweetdata_global_<键>[;<默认值>]%` 获取全局数值
 + `%sweetdata_global_$range,<最小值>,<最大值>$<键>[;<默认值>]%` 判定全局数值是否是整数，且是否在范围内
 
@@ -54,4 +56,7 @@ Minecraft 通用数值同步插件
 %sweetdata_my-key;0%             如果 my-key 未设置，则输出 0
 %sweetdata_$range,0,9$my-key;0%  如果 my-key 未设置，或者不是整数，或者不在 0-9 范围内，则输出 no；反之输出 yes
 输出的 yes 和 no 可以在 PlaceholderAPI 的 config.yml 中修改
+
+%sweetdata_@LittleCatX@_my-key%  同上，获取玩家 LittleCatX 的数值
+%sweetdata_global_my-key%`       同上，获取全局数值
 ```
