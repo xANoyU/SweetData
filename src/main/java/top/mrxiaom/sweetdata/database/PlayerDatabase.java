@@ -257,7 +257,7 @@ public class PlayerDatabase extends AbstractPluginHolder implements IDatabase, L
     @NotNull
     private Optional<String> get(Connection conn, String player, String key) throws SQLException {
         try (PreparedStatement ps = conn.prepareStatement(
-                "SELECT `value` FROM `" + TABLE_PLAYERS + "` WHERE `player=`? AND `key`=?;"
+                "SELECT `value` FROM `" + TABLE_PLAYERS + "` WHERE `player`=? AND `key`=?;"
         )) {
             ps.setString(1, player);
             ps.setString(2, key);
