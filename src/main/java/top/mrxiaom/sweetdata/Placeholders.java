@@ -29,11 +29,11 @@ public class Placeholders extends PlaceholdersExpansion<SweetData> {
                 String[] split = params1.substring(1).split("\\$", 2);
                 if (split.length == 1) return bool(false);
                 String[] conditionArray = split[0].split(",");
-                String[] split1 = split[1].split("!", 2);
+                String[] split1 = split[1].split(";", 2);
                 return $(conditionArray, split1, global::get);
             }
 
-            String[] split = params1.split("!", 2);
+            String[] split = params1.split(";", 2);
             String key = split[0];
             String def = split.length == 2 ? split[1] : "";
 
@@ -61,14 +61,14 @@ public class Placeholders extends PlaceholdersExpansion<SweetData> {
             String[] split = params.substring(1).split("\\$", 2);
             if (split.length == 1) return bool(false);
             String[] conditionArray = split[0].split(",");
-            String[] split1 = split[1].split("!", 2);
+            String[] split1 = split[1].split(";", 2);
             if (player == null) {
                 return split1[1]; // def
             }
             return $(conditionArray, split1, key -> get(player, key));
         }
 
-        String[] split = params.split("!", 2);
+        String[] split = params.split(";", 2);
         String key = split[0];
         String def = split.length == 2 ? split[1] : "";
         if (player == null) {
